@@ -8,7 +8,13 @@ public class Piece : MonoBehaviour
     private Vector2 offset;
     bool inCell = false;
 
-    [SerializeField] string inCellID = "00";
+    public Vector2 inCellID;
+
+    public List<Vector2> Neighbors;
+
+    public List<Vector2> lastSpawnedIDs;
+
+    public GameObject spawnPrefab;
 
     [SerializeField] private Vector2 originalPosition;
 

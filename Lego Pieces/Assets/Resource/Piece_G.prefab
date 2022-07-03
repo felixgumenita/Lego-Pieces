@@ -96,7 +96,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c60a7582d4d56d478791958ce7c28e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inCellID: 
+  inCellID: {x: 0, y: 0}
+  Neighbors: []
+  lastSpawnedID: {x: 0, y: 0}
+  spawnPrefab: {fileID: 1653606512100070517, guid: 5d38b75684425f44a9a76322d43d5f34, type: 3}
   originalPosition: {x: 5.2, y: 0.18}
 --- !u!61 &3394097872956760872
 BoxCollider2D:

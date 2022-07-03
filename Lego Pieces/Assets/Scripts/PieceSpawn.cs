@@ -2,24 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Cell : MonoBehaviour
+public class PieceSpawn : MonoBehaviour
 {
     public Vector2 CellID;
-
     public List<Vector2> CellNeighbor;
 
-    public bool ChoosedForSpawning = false;
-
-    public void FindNeighbors(Vector2 gridSize)
+    void FindPieceNeighbors(Vector2 GridSize)
     {
-        var x = gridSize.x;
-        var y = gridSize.y;
+        var x = GridSize.x;
+        var y = GridSize.y;
 
         var cX = CellID.x;
         var cY = CellID.y;
 
-        
-        if(cX == 0 && cY == 0) //Left bottom corner
+
+        if (cX == 0 && cY == 0) //Left bottom corner
         {
             var n1 = new Vector2(cX + 1, cY);
             var n2 = new Vector2(cX, cY + 1);
@@ -61,7 +58,7 @@ public class Cell : MonoBehaviour
             CellNeighbor.Add(n2);
             CellNeighbor.Add(n3);
         }
-        else if (x -  1 == cX) //Right edge
+        else if (x - 1 == cX) //Right edge
         {
             var n1 = new Vector2(cX, cY + 1);
             var n2 = new Vector2(cX, cY - 1);
@@ -104,5 +101,4 @@ public class Cell : MonoBehaviour
             CellNeighbor.Add(n4);
         }
     }
-
 }
