@@ -7,7 +7,10 @@ public class GridCells
 {
     [HideInInspector] public string CellIDName = "";
     public Vector2 ID = new Vector2(-1, -1);
-    public bool isFilled = false;
+    [HideInInspector] public bool isFilled = false;
+    public string Color = "Red";
+    public bool IsParent = false;
+    public Vector2 OriginalPosition = new Vector2(0, 0);
 
     public GridCells(Vector2 id, bool isFilled, string name)
     {
@@ -16,22 +19,32 @@ public class GridCells
         this.isFilled = isFilled;
     }
 }
-public class GridManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     #region Managers
     PlayerSettingsManager playerSettings;
     #endregion
 
-    private int minSize = 4;
-    private int maxSize = 6;
-    [SerializeField] private int pieceCount = 6;
+    public int gridSize = 4;
+    public int pieceCount = 6;
     [SerializeField] private GameObject Cell;
-    [SerializeField] private List<GameObject> Pieces;
+    public List<GameObject> Pieces;
+    [SerializeField] private BoxCollider2D randomPoints;
 
+    #region Lists
     private List<GameObject> currentCells = new List<GameObject>();
-    private List<GameObject> currentPieces = new List<GameObject>();
+    private List<GameObject> spawnedCells = new List<GameObject>();
+    [HideInInspector] public List<GameObject> parentPieces = new List<GameObject>();
+    [HideInInspector] public List<GameObject> childPieces = new List<GameObject>();
     private List<Vector2> spawnedPieces = new List<Vector2>();
-    private List<GridCells> gridCells = new List<GridCells>();
+    [HideInInspector] public List<GameObject> spawnedPiecesObj = new List<GameObject>();
+    [HideInInspector] public List<GridCells> gridCells = new List<GridCells>();
+    #endregion
+
+    #region For Debugging
+    bool isFinished = false;
+    bool isSpawn = false;
+    #endregion
 
     private void Awake()
     {
@@ -39,50 +52,119 @@ public class GridManager : MonoBehaviour
     }
     private void Start()
     {
-        GenerateGrid(minSize, maxSize);
+        GenerateGrid(gridSize);
     }
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            GenerateGrid(minSize, maxSize);
+            if (!isSpawn)
+            {
+                //ResetGrid();
+                //GenerateGrid(gridSize);
+                //isSpawn = true;
+            }
         }
-        else if (Input.GetKeyDown(KeyCode.A))
+        else if (Input.GetKeyUp(KeyCode.R))
         {
-            SpawnPieces(currentCells, pieceCount, Pieces);
-        }
-        else if (Input.GetKeyDown(KeyCode.B))
-        {
-            ScalePieces(currentPieces);
+            isSpawn = false;
         }
     }
-    void GenerateGrid(int _MinSize, int _MaxSize)
+    public void ReGenerateGrid()
     {
-        if(currentCells != null)
+        ResetGrid();
+        GenerateGrid(gridSize);
+        isSpawn = true;
+    }
+    public void ResetGrid()
+    {
+        ResetList(currentCells);
+        ResetList(parentPieces);
+        ResetList(spawnedCells);
+        ResetList(spawnedPiecesObj);
+
+        spawnedPieces.Clear();
+
+        gridCells.Clear();
+
+        isFinished = false;
+    }
+
+    #region For Load
+    public void GenerateGridFromLoad()
+    {
+        var size = playerSettings.CurrentCellSize;
+
+        playerSettings.CurrentCellSize = new Vector2(size.x, size.y);
+
+        for (int y = 0; y < size.y; y++)
         {
-            foreach(GameObject g in currentCells)
+            for (int x = 0; x < size.x; x++)
             {
-                Destroy(g);
+                var spawnCell = Instantiate(Cell, new Vector3(x, y), Quaternion.identity);
+                spawnedCells.Add(spawnCell);
+                spawnCell.name = $"{x},{y}";
+
+                var cell = spawnCell.GetComponent<Cell>();
+                cell.CellID = new Vector2(x, y);
+            }
+        }
+    }
+    public void CombinePiecesFromLoad()
+    {
+        foreach (GameObject Parent in parentPieces)
+        {
+            foreach (GameObject Child in spawnedPiecesObj)
+            {
+                var parent = Parent.GetComponent<Piece>();
+                var childe = Child.GetComponent<PieceSpawn>();
+
+                if (parent.ColorName == childe.ColorName)
+                {
+                    Child.transform.parent = Parent.transform;
+                }
             }
         }
 
-        var xSize = Random.Range(_MinSize, _MaxSize);
-
-        var ySize = Random.Range(_MinSize, _MaxSize);
-
-        playerSettings.CurrentCellSize = new Vector2(xSize, ySize);
-
-        for (int y = 0; y < ySize; y++)
+        foreach(GameObject Parent in parentPieces)
         {
-            for(int x = 0; x < xSize; x++)
+            var piece = Parent.GetComponent<Piece>();
+            Parent.transform.position = piece.originalPosition;
+        }
+    }
+    #endregion
+
+    #region Private 
+    void ResetList(List<GameObject> objList)
+    {
+        if(objList.Count != 0)
+        {
+            foreach (GameObject o in objList)
+            {
+                Destroy(o);
+            }
+
+            objList.Clear();
+        }
+    }
+    void GenerateGrid(int gridSize)
+    {
+        var size = gridSize;
+
+        playerSettings.CurrentCellSize = new Vector2(size, size);
+
+        for (int y = 0; y < size; y++)
+        {
+            for(int x = 0; x < size; x++)
             {
                 var spawnCell = Instantiate(Cell, new Vector3(x, y), Quaternion.identity);
+                spawnedCells.Add(spawnCell);
                 spawnCell.name = $"{x},{y}";
 
                 var cell = spawnCell.GetComponent<Cell>();
                 cell.CellID = new Vector2(x, y);
 
-                cell.FindNeighbors(playerSettings.CurrentCellSize); //Assign Neighbors
+                FindPieceNeighbors(playerSettings.CurrentCellSize, cell.CellID, cell.CellNeighbor); //Assign Neighbors
 
                 var g = new GridCells(cell.CellID, false, $"{x} - {y}");
 
@@ -90,6 +172,8 @@ public class GridManager : MonoBehaviour
                 currentCells.Add(spawnCell);
             }
         }
+
+        SpawnPieces(currentCells, pieceCount, Pieces);
     }
     void SpawnPieces(List<GameObject> Cells, int AmountOfPieces, List<GameObject> Pieces)
     {
@@ -110,13 +194,15 @@ public class GridManager : MonoBehaviour
             piecePiece.Neighbors = cellNeighbors;
             piecePiece.inCellID = cellID;
 
-            currentPieces.Add(piece);
+            parentPieces.Add(piece);
 
             foreach (GridCells g in gridCells)
             {
                 if (g.ID == cellID)
                 {
                     g.isFilled = true;
+                    g.IsParent = true;
+                    g.Color = piecePiece.ColorName;
                 }
             }
 
@@ -124,11 +210,11 @@ public class GridManager : MonoBehaviour
         }
 
         //Check Near Pieces
-        foreach(GameObject o in currentPieces)
+        foreach(GameObject o in parentPieces)
         {
             var cellID = o.GetComponent<Piece>().inCellID;
 
-            foreach(GameObject a in currentPieces)
+            foreach(GameObject a in parentPieces)
             {
                 if (a.GetComponent<Piece>().Neighbors.Contains(cellID))
                 {
@@ -136,10 +222,12 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
+
+        while(!isFinished) ScalePieces(parentPieces);
     }
-    void ScalePieces(List<GameObject> CurrentPieces)
+    void ScalePieces(List<GameObject> parentPieces)
     {
-        foreach (GameObject o in CurrentPieces)
+        foreach (GameObject o in parentPieces)
         {
             var neighbors = o.GetComponent<Piece>().Neighbors;
 
@@ -161,15 +249,21 @@ public class GridManager : MonoBehaviour
 
                 if (canSpawn)
                 {
+                    var scaledPiece = Instantiate(piece.spawnPrefab, cellID, Quaternion.identity);
+
                     foreach (GridCells g in gridCells)
                     {
-                        if (g.ID == cellID) g.isFilled = true;
+                        if (g.ID == cellID)
+                        {
+                            g.isFilled = true;
+                            g.Color = scaledPiece.GetComponent<PieceSpawn>().ColorName;
+                        }
                     }
-
-                    var scaledPiece = Instantiate(piece.spawnPrefab, cellID, Quaternion.identity);
+                    spawnedPiecesObj.Add(scaledPiece);
 
                     scaledPiece.GetComponent<PieceSpawn>().CellID = cellID;
                     o.GetComponent<Piece>().lastSpawnedIDs.Add(cellID);
+                    scaledPiece.GetComponent<PieceSpawn>().ColorName = o.GetComponent<Piece>().ColorName;
 
                     spawnedPieces.Add(scaledPiece.GetComponent<PieceSpawn>().CellID);
 
@@ -188,20 +282,18 @@ public class GridManager : MonoBehaviour
                     }
 
                     neighbors.Remove(piece.inCellID);
-
-                    o.transform.parent = scaledPiece.transform;
                 }
             }
-            
+
         }
 
-        foreach(GameObject o in currentPieces)
+        foreach (GameObject o in parentPieces)
         {
             var n = o.GetComponent<Piece>().Neighbors;
 
-            foreach(GridCells g in gridCells)
+            foreach (GridCells g in gridCells)
             {
-                for(int i = 0; i < n.Count; i++)
+                for (int i = 0; i < n.Count; i++)
                 {
                     if (g.ID == n[i] && g.isFilled)
                     {
@@ -210,6 +302,27 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
+
+        List<bool> checkFinished = new List<bool>();
+
+        foreach(GridCells g in gridCells)
+        {
+            checkFinished.Add(g.isFilled);
+        }
+
+        int count = 0;
+
+        for(int i =0; i<checkFinished.Count; i++)
+        {
+            if (checkFinished[i]) count++;
+        }
+
+        if (count == checkFinished.Count) 
+        {
+            isFinished = true;
+            CombinePieces();
+            SetRandomPoints(randomPoints, parentPieces);
+        } 
 
     }
     void FindPieceNeighbors(Vector2 GridSize, Vector2 CellID, List<Vector2> CellNeighbor)
@@ -306,4 +419,56 @@ public class GridManager : MonoBehaviour
             CellNeighbor.Add(n4);
         }
     }
+    void CombinePieces()
+    {
+        foreach(GameObject Parent in parentPieces)
+        {
+            foreach(GameObject Child in spawnedPiecesObj)
+            {
+                var parent = Parent.GetComponent<Piece>();
+                var childe = Child.GetComponent<PieceSpawn>();
+
+                if(parent.ColorName == childe.ColorName)
+                {
+                    Child.transform.parent = Parent.transform;
+                }
+            }
+        }
+    }
+    void SetRandomPoints(BoxCollider2D collider, List<GameObject> parentPiece)
+    {
+        if (collider == null) return;
+
+        var _colPos = (Vector2)collider.transform.position + collider.offset;
+
+        foreach (GameObject Parent in parentPiece)
+        {
+            var piece = Parent.GetComponent<Piece>();
+
+            float randomPosX = Random.Range
+                (_colPos.x - collider.size.x / 2, 
+                _colPos.x + collider.size.x / 2);
+
+            float randomPosY = Random.Range
+                (_colPos.y - collider.size.y / 2, 
+                _colPos.y + collider.size.y / 2);
+
+            piece.originalPosition = new Vector2(randomPosX, randomPosY);
+
+            Parent.transform.position = new Vector2(randomPosX, randomPosY);
+
+            for (int i = 0; i < gridCells.Count; i++)
+            {
+                if (piece.ColorName == gridCells[i].Color && gridCells[i].IsParent)
+                {
+                    gridCells[i].OriginalPosition = piece.originalPosition;
+                }
+                else if (!gridCells[i].IsParent)
+                {
+                    gridCells[i].OriginalPosition = new Vector2(0, 0);
+                }
+            }
+        }
+    }
+    #endregion
 }

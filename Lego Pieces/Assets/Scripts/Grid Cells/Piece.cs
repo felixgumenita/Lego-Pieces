@@ -6,17 +6,16 @@ public class Piece : MonoBehaviour
 {
     private bool isDragging = false;
     private Vector2 offset;
-    bool inCell = false;
 
-    public Vector2 inCellID;
+    public string ColorName = "Red";
 
-    public List<Vector2> Neighbors;
-
-    public List<Vector2> lastSpawnedIDs;
+    [HideInInspector] public Vector2 inCellID;
+    [HideInInspector] public List<Vector2> Neighbors;
+    [HideInInspector] public List<Vector2> lastSpawnedIDs;
 
     public GameObject spawnPrefab;
 
-    [SerializeField] private Vector2 originalPosition;
+    [HideInInspector] public Vector2 originalPosition;
 
     private void Update()
     {
@@ -34,12 +33,6 @@ public class Piece : MonoBehaviour
     private void OnMouseUp()
     {
         isDragging = false;
-
-        if (!inCell)
-        {
-            //transform.position = originalPosition;
-            return;
-        }
     }
 
     private Vector2 CursorPosition()
