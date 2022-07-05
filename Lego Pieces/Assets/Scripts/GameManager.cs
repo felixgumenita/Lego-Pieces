@@ -434,8 +434,6 @@ public class GameManager : MonoBehaviour
                     Child.transform.parent = Parent.transform;
                 }
             }
-
-            parent.FindSnapComponentsInChilds();
         }
 
     }

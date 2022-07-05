@@ -19,22 +19,42 @@ public class Piece : MonoBehaviour
 
     public List<bool> childInCell = new List<bool>();
 
+    public Cell SnapCell;
+
     private void Update()
     {
         if (!isDragging) return;
 
-        transform.position = CursorPosition() - offset;
+        var pos = CursorPosition() - offset;
+        transform.position = Vector2.Lerp(transform.position, pos, 10f);
     }
 
     private void OnMouseDown()
     {
         isDragging = true;
         offset = CursorPosition() - (Vector2)transform.position;
+        childInCell.Clear();
     }
 
     private void OnMouseUp()
     {
         isDragging = false;
+
+        FindSnapComponentsInChilds();
+
+        int i = 0;
+
+        foreach(bool snap in childInCell)
+        {
+            if (snap) i++;
+        }
+
+        if (childInCell.Count != i) return;
+
+        var pos = new Vector2(SnapCell.CellID.x, SnapCell.CellID.y);
+
+        transform.position = pos;
+
     }
 
     private Vector2 CursorPosition()
