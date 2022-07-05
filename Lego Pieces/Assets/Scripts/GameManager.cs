@@ -28,14 +28,14 @@ public class GameManager : MonoBehaviour
     public int gridSize = 4;
     public int pieceCount = 6;
     [SerializeField] private GameObject Cell;
-    public List<GameObject> Pieces;
     [SerializeField] private BoxCollider2D randomPoints;
+    public List<GameObject> Pieces;
+    public List<GameObject> childPieces = new List<GameObject>();
 
     #region Lists
     private List<GameObject> currentCells = new List<GameObject>();
     private List<GameObject> spawnedCells = new List<GameObject>();
     [HideInInspector] public List<GameObject> parentPieces = new List<GameObject>();
-    [HideInInspector] public List<GameObject> childPieces = new List<GameObject>();
     private List<Vector2> spawnedPieces = new List<Vector2>();
     [HideInInspector] public List<GameObject> spawnedPiecesObj = new List<GameObject>();
     [HideInInspector] public List<GridCells> gridCells = new List<GridCells>();

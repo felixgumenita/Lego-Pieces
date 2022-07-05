@@ -52,6 +52,7 @@ public class SaveLoadManager : MonoBehaviour
         gameManager.GenerateGridFromLoad();
 
         var piece = gameManager.Pieces;
+        var child = gameManager.childPieces;
         foreach (GridCells g in levelData)
         {
             for(int i = 0; i < piece.Count; i++)
@@ -62,14 +63,9 @@ public class SaveLoadManager : MonoBehaviour
                     var obj = Instantiate(piece[i], g.ID, Quaternion.identity);
                     obj.GetComponent<Piece>().originalPosition = g.OriginalPosition;
                     gameManager.parentPieces.Add(obj);
-                    gameManager.childPieces.Add(ipiece.spawnPrefab);
                 }
             }
-        }
 
-        var child = gameManager.childPieces;
-        foreach (GridCells g in levelData)
-        {
             for (int i = 0; i < child.Count; i++)
             {
                 var ichild = child[i].GetComponent<PieceSpawn>();
@@ -79,6 +75,11 @@ public class SaveLoadManager : MonoBehaviour
                     gameManager.spawnedPiecesObj.Add(obj);
                 }
             }
+        }
+
+        
+        foreach (GridCells g in levelData)
+        {
         }
 
         gameManager.CombinePiecesFromLoad();

@@ -24,19 +24,16 @@ public class PlayerSettingsManager : MonoBehaviour
             case 0:
                 gameManager.gridSize = 4;
                 _Difficulty = Difficulty.Easy;
-                gameManager.ReGenerateGrid();
                 break;
 
             case 1:
                 gameManager.gridSize = 5;
                 _Difficulty = Difficulty.Medium;
-                gameManager.ReGenerateGrid();
                 break;
 
             case 2:
                 gameManager.gridSize = 6;
                 _Difficulty = Difficulty.Hard;
-                gameManager.ReGenerateGrid();
                 break;
         }
     }
