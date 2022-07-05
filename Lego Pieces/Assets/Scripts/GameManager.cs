@@ -423,9 +423,10 @@ public class GameManager : MonoBehaviour
     {
         foreach(GameObject Parent in parentPieces)
         {
-            foreach(GameObject Child in spawnedPiecesObj)
+            var parent = Parent.GetComponent<Piece>();
+
+            foreach (GameObject Child in spawnedPiecesObj)
             {
-                var parent = Parent.GetComponent<Piece>();
                 var childe = Child.GetComponent<PieceSpawn>();
 
                 if(parent.ColorName == childe.ColorName)
@@ -433,7 +434,10 @@ public class GameManager : MonoBehaviour
                     Child.transform.parent = Parent.transform;
                 }
             }
+
+            parent.FindSnapComponentsInChilds();
         }
+
     }
     void SetRandomPoints(BoxCollider2D collider, List<GameObject> parentPiece)
     {

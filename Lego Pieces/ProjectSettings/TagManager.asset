@@ -4,13 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Piece
+  - Cell
   - Blue
-  - Green
-  - Magenta
-  - Purple
-  - Red
-  - Yellow
   layers:
   - Default
   - TransparentFX
@@ -19,8 +14,8 @@ TagManager:
   - Water
   - UI
   - Piece
-  - 
-  - 
+  - Snap
+  - Cell
   - 
   - 
   - 

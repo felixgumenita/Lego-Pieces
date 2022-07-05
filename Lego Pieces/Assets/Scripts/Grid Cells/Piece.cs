@@ -17,6 +17,8 @@ public class Piece : MonoBehaviour
 
     [HideInInspector] public Vector2 originalPosition;
 
+    public List<bool> childInCell = new List<bool>();
+
     private void Update()
     {
         if (!isDragging) return;
@@ -38,5 +40,15 @@ public class Piece : MonoBehaviour
     private Vector2 CursorPosition()
     {
         return (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    }
+
+    public void FindSnapComponentsInChilds()
+    {
+        var childs = GetComponentsInChildren<PieceSnap>();
+
+        foreach(PieceSnap p in childs)
+        {
+            if(!p.isParent) childInCell.Add(p.isSnap);
+        }
     }
 }

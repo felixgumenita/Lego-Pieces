@@ -19,10 +19,10 @@ public class SaveLoadManager : MonoBehaviour
     }
     public void SaveData()
     {
-        if (inputField.text == null) return;
-
         var name = inputField.text;
         var namePlayer = $"{name}{SaveLoad.PlayerDataAdditional}.json";
+
+        if (string.IsNullOrEmpty(name)) return;
 
         PlayerStorage playerData = new PlayerStorage
             (playerSettings.CurrentCellSize,
@@ -35,10 +35,12 @@ public class SaveLoadManager : MonoBehaviour
 
     public void LoadData()
     {
-        gameManager.ResetGrid();
-
         var name = inputField.text;
         var namePlayer = $"{name}{SaveLoad.PlayerDataAdditional}.json";
+
+        if (string.IsNullOrEmpty(name)) return;
+
+        gameManager.ResetGrid();
 
         var playerData = SaveLoad.LoadPlayerData<PlayerStorage>(namePlayer);
 
