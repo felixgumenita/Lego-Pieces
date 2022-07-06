@@ -11,12 +11,15 @@ public class PlayerSettingsManager : MonoBehaviour
     public enum Difficulty { Easy = 0, Medium = 1, Hard = 2 };
     public enum GameState { Generate, Dragging, InGame };
 
+    [SerializeField] private LayerMask InputLayerMask;
+
     public Difficulty _Difficulty = Difficulty.Easy;
     public static GameState _GameState = GameState.Generate;
 
     public Vector2 CurrentCellSize = new Vector2(0, 0);
 
     public List<GridCells> Grids = new List<GridCells>();
+
     public void SetDifficulty(int value)
     {
         gameManager = FindObjectOfType<GameManager>(); 
@@ -59,5 +62,6 @@ public class PlayerSettingsManager : MonoBehaviour
     void Start()
     {
         Grids = gameManager.gridCells;
+        Camera.main.eventMask = InputLayerMask;
     }
 }

@@ -11,11 +11,14 @@ public class SaveLoadManager : MonoBehaviour
     #endregion
 
     [SerializeField] InputField inputField;
+    [SerializeField] Text filePath;
+    [SerializeField] Text lastSaveFileName;
 
     private void Awake()
     {
         playerSettings = FindObjectOfType<PlayerSettingsManager>();
         gameManager = FindObjectOfType<GameManager>();
+        filePath.text = $"Path: <b>{Application.persistentDataPath}</b>";
     }
     public void SaveData()
     {
@@ -31,6 +34,10 @@ public class SaveLoadManager : MonoBehaviour
 
         SaveLoad.SavePlayerData<PlayerStorage>(playerData, namePlayer);
         SaveLoad.SaveCellData<GridCells>(playerSettings.Grids, $"{name}.json");
+
+        lastSaveFileName.text = $"Last Save: {inputField.text}";
+
+        inputField.text = string.Empty;
     }
 
     public void LoadData()
@@ -79,11 +86,8 @@ public class SaveLoadManager : MonoBehaviour
             }
         }
 
-        
-        foreach (GridCells g in levelData)
-        {
-        }
-
         gameManager.CombinePiecesFromLoad();
+
+        inputField.text = string.Empty;
     }
 }

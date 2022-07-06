@@ -109,7 +109,7 @@ public class GameManager : MonoBehaviour
             {
                 var spawnCell = Instantiate(Cell, new Vector3(x, y), Quaternion.identity);
                 spawnCell.name = $"{x},{y}";
-
+                spawnedCells.Add(spawnCell);
                 var cell = spawnCell.GetComponent<Cell>();
                 cell.CellID = new Vector2(x, y);
             }

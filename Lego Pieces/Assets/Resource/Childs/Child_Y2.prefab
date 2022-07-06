@@ -100,7 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CellID: {x: 0, y: 0}
   CellNeighbor: []
-  ColorName: Yellow
+  ColorName: Yellow2
 --- !u!61 &-2499385686582106755
 BoxCollider2D:
   m_ObjectHideFlags: 0
