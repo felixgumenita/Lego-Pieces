@@ -25,15 +25,16 @@ public class GameManager : MonoBehaviour
     PlayerSettingsManager playerSettings;
     #endregion
 
-    public int gridSize = 4;
-    public int pieceCount = 6;
+    [HideInInspector] public int gridSize = 4;
+    [HideInInspector] public int minPieceCount = 6;
+    [HideInInspector] public int maxPieceCount = 7;
     [SerializeField] private GameObject Cell;
     [SerializeField] private BoxCollider2D randomPoints;
-    public List<GameObject> Pieces;
-    public List<GameObject> childPieces = new List<GameObject>();
+    [SerializeField] private GameObject winButton;
 
     #region Lists
-    private List<GameObject> currentCells = new List<GameObject>();
+    public List<GameObject> Pieces;
+    public List<GameObject> childPieces = new List<GameObject>();
     private List<GameObject> spawnedCells = new List<GameObject>();
     [HideInInspector] public List<GameObject> parentPieces = new List<GameObject>();
     private List<Vector2> spawnedPieces = new List<Vector2>();
@@ -41,46 +42,31 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public List<GridCells> gridCells = new List<GridCells>();
     #endregion
 
-    #region For Debugging
-    bool isFinished = false;
-    bool isSpawn = false;
-    #endregion
+    private bool isFinished = false;
 
     private void Awake()
     {
         playerSettings = FindObjectOfType<PlayerSettingsManager>();
+        minPieceCount = 6;
+        maxPieceCount = 7;
+
     }
     private void Start()
     {
+        playerSettings._Difficulty = PlayerSettingsManager.Difficulty.Easy;
         GenerateGrid(gridSize);
     }
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            if (!isSpawn)
-            {
-                //ResetGrid();
-                //GenerateGrid(gridSize);
-                //isSpawn = true;
-            }
-        }
-        else if (Input.GetKeyUp(KeyCode.R))
-        {
-            isSpawn = false;
-        }
-    }
+
+    #region Public 
     public void ReGenerateGrid()
     {
         ResetGrid();
         GenerateGrid(gridSize);
-        isSpawn = true;
     }
     public void ResetGrid()
     {
-        ResetList(currentCells);
-        ResetList(parentPieces);
         ResetList(spawnedCells);
+        ResetList(parentPieces);
         ResetList(spawnedPiecesObj);
 
         spawnedPieces.Clear();
@@ -89,10 +75,30 @@ public class GameManager : MonoBehaviour
 
         isFinished = false;
     }
+    public void CheckWinLevel()
+    {
+        for(int i = 0; i < spawnedCells.Count; i++)
+        {
+            var cell = spawnedCells[i].GetComponent<Cell>();
+            if(cell.snapedPiece == null)
+            {
+                print($"Cell: {cell.CellID} is null");
+                return;
+            }
+        }
+
+        print("Level Win");
+        WinLevel();
+
+
+    }
+    #endregion
 
     #region For Load
     public void GenerateGridFromLoad()
     {
+        PlayerSettingsManager._GameState = PlayerSettingsManager.GameState.Generate;
+
         var size = playerSettings.CurrentCellSize;
 
         playerSettings.CurrentCellSize = new Vector2(size.x, size.y);
@@ -102,7 +108,6 @@ public class GameManager : MonoBehaviour
             for (int x = 0; x < size.x; x++)
             {
                 var spawnCell = Instantiate(Cell, new Vector3(x, y), Quaternion.identity);
-                spawnedCells.Add(spawnCell);
                 spawnCell.name = $"{x},{y}";
 
                 var cell = spawnCell.GetComponent<Cell>();
@@ -131,6 +136,8 @@ public class GameManager : MonoBehaviour
             var piece = Parent.GetComponent<Piece>();
             Parent.transform.position = piece.originalPosition;
         }
+
+        PlayerSettingsManager._GameState = PlayerSettingsManager.GameState.InGame;
     }
     #endregion
 
@@ -143,22 +150,24 @@ public class GameManager : MonoBehaviour
             {
                 Destroy(o);
             }
-
-            objList.Clear();
         }
+
+        objList.Clear();
     }
     void GenerateGrid(int gridSize)
     {
+        PlayerSettingsManager._GameState = PlayerSettingsManager.GameState.Generate;
+
         var size = gridSize;
 
         playerSettings.CurrentCellSize = new Vector2(size, size);
+        spawnedCells = new List<GameObject>(size);
 
         for (int y = 0; y < size; y++)
         {
             for(int x = 0; x < size; x++)
             {
                 var spawnCell = Instantiate(Cell, new Vector3(x, y), Quaternion.identity);
-                spawnedCells.Add(spawnCell);
                 spawnCell.name = $"{x},{y}";
 
                 var cell = spawnCell.GetComponent<Cell>();
@@ -169,14 +178,18 @@ public class GameManager : MonoBehaviour
                 var g = new GridCells(cell.CellID, false, $"{x} - {y}");
 
                 gridCells.Add(g);
-                currentCells.Add(spawnCell);
+                spawnedCells.Add(spawnCell);
             }
         }
 
-        SpawnPieces(currentCells, pieceCount, Pieces);
+        int pieceCount = Random.Range(minPieceCount, maxPieceCount);
+
+        SpawnPieces(spawnedCells, pieceCount, Pieces);
     }
     void SpawnPieces(List<GameObject> Cells, int AmountOfPieces, List<GameObject> Pieces)
     {
+        List<GameObject> removedCells = new List<GameObject>();
+
         for(int i = 0; i < AmountOfPieces; i++)
         {
             var random = Random.Range(0, Cells.Count);
@@ -206,7 +219,14 @@ public class GameManager : MonoBehaviour
                 }
             }
 
+            removedCells.Add(cell);
             Cells.Remove(cell);
+        }
+
+        //Add Back Removed Cells
+        foreach(GameObject g in removedCells)
+        {
+            Cells.Add(g);
         }
 
         //Check Near Pieces
@@ -471,6 +491,11 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+        PlayerSettingsManager._GameState = PlayerSettingsManager.GameState.InGame;
+    }
+    void WinLevel()
+    {
+        winButton.SetActive(true);
     }
     #endregion
 }

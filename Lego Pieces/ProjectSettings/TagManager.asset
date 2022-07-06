@@ -5,7 +5,14 @@ TagManager:
   serializedVersion: 2
   tags:
   - Cell
+  - Piece
+  - Snap
+  - Purple
+  - Magenta
+  - Red
+  - Green
   - Blue
+  - Yellow
   layers:
   - Default
   - TransparentFX
@@ -42,4 +49,40 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: B
+    uniqueID: 4193095727
+    locked: 0
+  - name: B2
+    uniqueID: 2470221685
+    locked: 0
+  - name: G
+    uniqueID: 2015997949
+    locked: 0
+  - name: G2
+    uniqueID: 1677549687
+    locked: 0
+  - name: M
+    uniqueID: 1035993757
+    locked: 0
+  - name: M2
+    uniqueID: 1744522463
+    locked: 0
+  - name: P
+    uniqueID: 1250401399
+    locked: 0
+  - name: P2
+    uniqueID: 4014635065
+    locked: 0
+  - name: R
+    uniqueID: 2493871129
+    locked: 0
+  - name: R2
+    uniqueID: 3281201875
+    locked: 0
+  - name: Y
+    uniqueID: 1009053589
+    locked: 0
+  - name: Y2
+    uniqueID: 3494171727
     locked: 0

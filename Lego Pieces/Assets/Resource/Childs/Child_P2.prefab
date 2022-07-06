@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4368793752458312033}
   - component: {fileID: -2499385686582106755}
   m_Layer: 6
-  m_Name: Child_Y
+  m_Name: Child_P2
   m_TagString: Snap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72,11 +72,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1009053589
-  m_SortingLayer: 11
-  m_SortingOrder: 11
+  m_SortingLayerID: -280332231
+  m_SortingLayer: 8
+  m_SortingOrder: 13
   m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
-  m_Color: {r: 1, g: 0.8352941, b: 0, a: 1}
+  m_Color: {r: 1, g: 0, b: 0.38479948, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CellID: {x: 0, y: 0}
   CellNeighbor: []
-  ColorName: Yellow
+  ColorName: Purple2
 --- !u!61 &-2499385686582106755
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -195,9 +195,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1009053589
-  m_SortingLayer: 11
-  m_SortingOrder: 12
+  m_SortingLayerID: -280332231
+  m_SortingLayer: 8
+  m_SortingOrder: 18
   m_Sprite: {fileID: 21300000, guid: 141664347ad3e75489879f51d0283097, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.5882353}
   m_FlipX: 0

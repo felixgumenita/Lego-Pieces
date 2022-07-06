@@ -68,8 +68,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1801096167
+  m_SortingLayer: 9
   m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: 141664347ad3e75489879f51d0283097, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.5882353}
@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: -8168453053592755532}
   m_Layer: 6
   m_Name: Piece_R
-  m_TagString: Red
+  m_TagString: Snap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -156,8 +156,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1801096167
+  m_SortingLayer: 9
   m_SortingOrder: 9
   m_Sprite: {fileID: 21300000, guid: 0273e6f275e975e4b973ad6c0270520b, type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
@@ -272,7 +272,7 @@ GameObject:
   - component: {fileID: 3672563929805250029}
   m_Layer: 2
   m_Name: Snap Col
-  m_TagString: Untagged
+  m_TagString: Snap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

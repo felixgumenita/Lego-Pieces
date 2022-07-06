@@ -8,4 +8,7 @@ public class Cell : MonoBehaviour
 
     public List<Vector2> CellNeighbor;
 
+    public bool isFilled = false;
+
+    public PieceSnap snapedPiece;
 }
