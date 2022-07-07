@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     [HideInInspector] public int gridSize = 4;
-    [HideInInspector] public int minPieceCount = 6;
+    [HideInInspector] public int minPieceCount = 5;
     [HideInInspector] public int maxPieceCount = 7;
     [SerializeField] private GameObject Cell;
     [SerializeField] private BoxCollider2D randomPoints;
@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         playerSettings = FindObjectOfType<PlayerSettingsManager>();
-        minPieceCount = 6;
+        minPieceCount = 5;
         maxPieceCount = 7;
 
     }

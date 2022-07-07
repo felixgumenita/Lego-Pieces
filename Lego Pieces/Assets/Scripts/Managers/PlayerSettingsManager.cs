@@ -29,7 +29,7 @@ public class PlayerSettingsManager : MonoBehaviour
             case 0:
                 gameManager.gridSize = 4;
 
-                gameManager.minPieceCount = 6;
+                gameManager.minPieceCount = 5;
                 gameManager.maxPieceCount = 7;
 
                 _Difficulty = Difficulty.Easy;
